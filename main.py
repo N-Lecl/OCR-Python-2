@@ -6,9 +6,6 @@ if __name__ == "__main__":
     base_url = "http://books.toscrape.com/catalogue/"
     base_category_url = "http://books.toscrape.com/index.html"
     
-    # Utilisez la fonction get_category_urls pour obtenir les URLs des catégories
-    category_urls = get_category_urls(base_category_url)
-    print(category_urls)
     
     # Demandez à l'utilisateur de choisir une catégorie
     category = input("Entrez le nom de la catégorie que vous souhaitez parcourir : ")
@@ -32,5 +29,9 @@ if __name__ == "__main__":
             for product_info in product_info_list:
                 write_product_info_to_csv(product_info_list, csv_filename)   
                 print(f"Données enregistrées dans {csv_filename}")
+                
+        # Utilisez la fonction get_category_urls pour obtenir les URLs des catégories
+        category_urls = get_category_urls(base_category_url)
+        print(category_urls)
 
 
