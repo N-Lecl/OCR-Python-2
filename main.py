@@ -1,10 +1,14 @@
 import csv
-from extract_product_data import extract_product_info, extract_product_links_by_category, write_product_info_to_csv
+from extract_product_data import extract_product_info, extract_product_links_by_category, get_category_urls, write_product_info_to_csv
 
 
 if __name__ == "__main__":
     base_url = "http://books.toscrape.com/catalogue/"
-
+    base_category_url = "http://books.toscrape.com/index.html"
+    
+    # Utilisez la fonction get_category_urls pour obtenir les URLs des catégories
+    category_urls = get_category_urls(base_category_url)
+    print(category_urls)
     
     # Demandez à l'utilisateur de choisir une catégorie
     category = input("Entrez le nom de la catégorie que vous souhaitez parcourir : ")

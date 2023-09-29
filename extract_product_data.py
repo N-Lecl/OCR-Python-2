@@ -86,3 +86,31 @@ def extract_product_links_by_category(base_url, category):
     else:
         print(f"Échec extract_product_links_by_category. Code d'erreur : {response.status_code}")
         return None
+    
+    
+def get_category_urls(base_url):
+    try:
+        # Envoyer une requête GET pour obtenir la page HTML
+        response = requests.get(base_url)
+        
+        # Vérifier si la requête a réussi
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Trouver la liste des catégories dans la div "side_categories"
+            categories_list = soup.find('div', class_='side_categories').ul.find_all('a')
+            
+            # Parcourir la liste et extraire les URLs des catégories
+            category_urls = []
+            for category in categories_list:
+                category_url = category['href']
+                category_urls.append(f"http://books.toscrape.com/{category_url}")
+            
+            return category_urls
+        else:
+            print(f"Échec de get_category_urls. Code d'erreur : {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+        return None
+
