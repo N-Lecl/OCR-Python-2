@@ -2,21 +2,6 @@ import csv
 from extract_product_data import extract_product_info, extract_product_links_by_category, write_product_info_to_csv
 
 
-# if __name__ == "__main__":
-#     product_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
-#     product_info = extract_product_info(product_url)
-    
-#     if product_info:
-#         # Nom du fichier CSV dans lequel vous souhaitez enregistrer les données
-#         csv_filename = f"{product_info['title']}.csv"
-        
-#         # Appel de la fonction pour écrire les données dans le fichier CSV
-#         write_product_info_to_csv(product_info, csv_filename)
-        
-#         print(f"Données enregistrées dans {csv_filename}")
-
-# -------------------------------------------------------------------------------
-
 if __name__ == "__main__":
     base_url = "http://books.toscrape.com/catalogue/"
 
