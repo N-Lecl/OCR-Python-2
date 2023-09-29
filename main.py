@@ -18,7 +18,8 @@ from extract_product_data import extract_product_info, extract_product_links_by_
 # -------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    base_url = "http://books.toscrape.com/catalogue/category"
+    base_url = "http://books.toscrape.com/catalogue/"
+
     
     # Demandez à l'utilisateur de choisir une catégorie
     category = input("Entrez le nom de la catégorie que vous souhaitez parcourir : ")
@@ -29,25 +30,18 @@ if __name__ == "__main__":
     if product_links:
         csv_filename = f"{category}_products.csv"
         
-        with open(csv_filename, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            
-            # Écrire l'en-tête du fichier CSV
-            header = [
-                'product_page_url', 'universal_product_code', 'title',
-                'price_including_tax', 'price_excluding_tax',
-                'number_available', 'product_description',
-                'category', 'review_rating', 'image_url'
-            ]
-            writer.writerow(header)
-            
-            # Parcourez tous les liens des pages produits
-            for product_url in product_links:
-                product_info = extract_product_info(product_url)
-                if product_info:
-                    # Écrire les données du produit dans le fichier CSV
-                    data = list(product_info.values())
-                    writer.writerow(data)
+        # Créez une liste pour stocker les informations de chaque produit
+        product_info_list = []
         
-        print(f"Données enregistrées dans {csv_filename}")
+        # Parcourez tous les liens des pages produits
+        for product_url in product_links:
+            product_info = extract_product_info(product_url)
+            if product_info:
+                product_info_list.append(product_info)
+        
+            # Utilisez la fonction write_product_info_to_csv pour écrire les données dans le fichier CSV
+            for product_info in product_info_list:
+                write_product_info_to_csv(product_info_list, csv_filename)   
+                print(f"Données enregistrées dans {csv_filename}")
+
 

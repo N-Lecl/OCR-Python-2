@@ -48,18 +48,21 @@ def extract_product_info(product_url):
     else:
         print(f"Échec extract_product_info. Code d'erreur : {response.status_code}")
         return None
-    
+
+
 def write_product_info_to_csv(product_info, csv_filename):
-    with open(csv_filename, mode='w', newline='') as file:
+    with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         
         # Écrire l'en-tête du fichier CSV
-        header = product_info.keys()
+        header = product_info[0].keys()  # Utilisez les clés du premier dictionnaire comme en-tête
         writer.writerow(header)
         
-        # Écrire les données du produit
-        data = product_info.values()
-        writer.writerow(data)
+        # Écrire les données de chaque produit
+        for info in product_info:
+            data = info.values()
+            writer.writerow(data)
+
 
     
 def extract_product_links_by_category(base_url, category):
@@ -73,7 +76,9 @@ def extract_product_links_by_category(base_url, category):
         # Trouver tous les liens des pages produits dans la catégorie
         product_elements = soup.find_all('h3')
         for element in product_elements:
-            product_links.append(f"{base_url}{element.a['href']}")
+            href = element.a['href']
+            cleaned_href = href.replace('../../../', '')
+            product_links.append(f"{base_url}{cleaned_href}")
         
         print(product_links)
         return product_links
