@@ -65,7 +65,7 @@ def write_product_info_to_csv(product_info, csv_filename):
 
 
     
-def extract_product_links_by_category(base_url):
+def extract_product_links_by_category(base_url, category):
     category_url = "http://books.toscrape.com/catalogue/category/books/travel_2/index.html"
     response = requests.get(category_url)
     
