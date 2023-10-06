@@ -1,4 +1,3 @@
-import csv
 from extract_product_data import extract_product_info, extract_product_links_by_category, get_category_urls, write_product_info_to_csv
 
 
@@ -8,10 +7,11 @@ if __name__ == "__main__":
     
     
     # Demandez à l'utilisateur de choisir une catégorie
-    category = input("Entrez le nom de la catégorie que vous souhaitez parcourir : ")
+    category = input("Entrez le nom du fichier CSV que vous souhaitez créer : ")
     
     # Obtenez les liens des pages produits pour la catégorie choisie
     product_links = extract_product_links_by_category(base_url, category)
+
     
     if product_links:
         csv_filename = f"{category}_products.csv"
@@ -33,5 +33,3 @@ if __name__ == "__main__":
         # Utilisez la fonction get_category_urls pour obtenir les URLs des catégories
         category_urls = get_category_urls(base_category_url)
         print(category_urls)
-
-
