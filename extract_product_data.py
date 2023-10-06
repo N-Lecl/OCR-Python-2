@@ -99,7 +99,7 @@ def extract_product_links_by_category(base_url, category, page_url=None):
 
     
     
-def get_category_urls(base_url):
+def get_category_names(base_url):
     try:
         # Envoyer une requête GET pour obtenir la page HTML
         response = requests.get(base_url)
@@ -111,15 +111,18 @@ def get_category_urls(base_url):
             # Trouver la liste des catégories dans la div "side_categories"
             categories_list = soup.find('div', class_='side_categories').ul.find_all('a')
             
-            # Parcourir la liste et extraire les URLs des catégories
-            category_urls = []
-            for category in categories_list:
-                category_url = category['href']
-                category_urls.append(f"http://books.toscrape.com/{category_url}")
+            # Créer une liste pour stocker les noms des catégories
+            category_names = []
             
-            return category_urls
+            # Parcourir la liste et extraire les noms des catégories
+            for category in categories_list:
+                # Extraire le nom de la catégorie à partir de l'URL
+                category_name = category['href'].split('/')[-2]  # Le nom est avant le dernier '/'
+                category_names.append(category_name)
+            
+            return category_names
         else:
-            print(f"Échec de get_category_urls. Code d'erreur : {response.status_code}")
+            print(f"Échec de get_category_names. Code d'erreur : {response.status_code}")
             return None
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
