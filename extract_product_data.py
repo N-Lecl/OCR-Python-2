@@ -124,23 +124,35 @@ def get_category_names(base_url):
         return None
 
 
+# Fonction pour télécharger et sauvegarder une image depuis une URL
 def download_and_save_image(image_url, category_dir, alt_text):
+
     base_url = "http://books.toscrape.com/catalogue/"
-    
+
+    # Générer un nom de fichier à partir du texte alternatif (alt_text) de l'image
+    # Enleve les caractères non alphanumériques et les espaces, puis remplace les espaces par des underscores
     filename = ''.join(e for e in alt_text if e.isalnum() or e.isspace())
     filename = filename.replace(' ', '_') + '.jpg'
+    
+    # Définition du répertoire où les images seront sauvegardées 
     images_dir = os.path.join(category_dir, "images")
     
     if not os.path.exists(images_dir):
         os.makedirs(images_dir)
     
+    # Construire le chemin complet du fichier image
     image_path = os.path.join(images_dir, filename)
+    
+    # Compléter l'URL de l'image en utilisant l'URL de base
     image_url = urljoin(base_url, image_url)
     
     response = requests.get(image_url)
+    
     if response.status_code == 200:
+        # Si la requête a réussi, ouvrir le fichier image et y écrire le contenu téléchargé
         with open(image_path, 'wb') as image_file:
             image_file.write(response.content)
         print(f"Image enregistrée sous {image_path}")
     else:
+        # En cas d'échec de la requête, afficher un message d'erreur avec l'URL de l'image
         print(f"Échec du téléchargement de l'image depuis {image_url}")
