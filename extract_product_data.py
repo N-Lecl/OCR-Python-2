@@ -1,7 +1,8 @@
 import csv
 import requests
 from bs4 import BeautifulSoup
-
+import os
+from urllib.parse import urljoin
 
 
 def extract_product_info(product_url):
@@ -64,7 +65,6 @@ def write_product_info_to_csv(product_info, csv_filename):
             data = info.values()
             writer.writerow(data)
 
-
     
 def extract_product_links_by_category(base_url, category, page_url=None):
     if page_url is None:
@@ -82,8 +82,6 @@ def extract_product_links_by_category(base_url, category, page_url=None):
             cleaned_href = href.replace('../../../', '')
             product_links.append(f"{base_url}{cleaned_href}")
 
-        print(product_links)
-
         # Vérifiez s'il y a un bouton "next" pour pagination
         next_button = soup.find('li', class_='next')
         if next_button:
@@ -93,12 +91,9 @@ def extract_product_links_by_category(base_url, category, page_url=None):
 
         return product_links
     else:
-        print(f"Échec extract_product_links_by_category. Code d'erreur : {response.status_code}")
         return None
 
 
-    
-    
 def get_category_names(base_url):
     try:
         # Envoyer une requête GET pour obtenir la page HTML
@@ -117,7 +112,7 @@ def get_category_names(base_url):
             # Parcourir la liste et extraire les noms des catégories
             for category in categories_list:
                 # Extraire le nom de la catégorie à partir de l'URL
-                category_name = category['href'].split('/')[-2]  # Le nom est avant le dernier '/'
+                category_name = category['href'].split('/')[-2]
                 category_names.append(category_name)
             
             return category_names
@@ -127,3 +122,25 @@ def get_category_names(base_url):
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
         return None
+
+
+def download_and_save_image(image_url, category_dir, alt_text):
+    base_url = "http://books.toscrape.com/catalogue/"
+    
+    filename = ''.join(e for e in alt_text if e.isalnum() or e.isspace())
+    filename = filename.replace(' ', '_') + '.jpg'
+    images_dir = os.path.join(category_dir, "images")
+    
+    if not os.path.exists(images_dir):
+        os.makedirs(images_dir)
+    
+    image_path = os.path.join(images_dir, filename)
+    image_url = urljoin(base_url, image_url)
+    
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        with open(image_path, 'wb') as image_file:
+            image_file.write(response.content)
+        print(f"Image enregistrée sous {image_path}")
+    else:
+        print(f"Échec du téléchargement de l'image depuis {image_url}")

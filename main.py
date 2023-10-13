@@ -1,41 +1,44 @@
-from extract_product_data import extract_product_info, extract_product_links_by_category, get_category_names, write_product_info_to_csv
-import datetime
+import os
+from extract_product_data import download_and_save_image, extract_product_info, extract_product_links_by_category, get_category_names, write_product_info_to_csv
 
 
 if __name__ == "__main__":
     base_url = "http://books.toscrape.com/catalogue/"
     base_category_url = "http://books.toscrape.com/index.html"
     
-    # Obtenez la liste des noms de catégories
     category_names = get_category_names(base_category_url)
     
     if category_names:
-        # Demandez à l'utilisateur de choisir une catégorie parmi la liste
-        print("Choisissez une catégorie parmi les suivantes :")
-        for i, category in enumerate(category_names, start=1):
-            print(f"{i}. {category}")
-        
-        choice = int(input("Entrez le numéro de la catégorie que vous souhaitez : "))
-        selected_category = category_names[choice - 1]
-        
-        # Générez un nom de fichier basé sur la catégorie et l'horodatage
-        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        csv_filename = f"{selected_category}_{timestamp}.csv"
-        
-        # Obtenez les liens des pages produits pour la catégorie choisie
-        product_links = extract_product_links_by_category(base_url, selected_category)
-        
-        # Créez une liste pour stocker les informations de chaque produit
-        product_info_list = []
-        
-        # Parcourez tous les liens des pages produits
-        for product_url in product_links:
-            product_info = extract_product_info(product_url)
-            if product_info:
-                product_info_list.append(product_info)
-        
-        # Utilisez la fonction write_product_info_to_csv pour écrire les données dans le fichier CSV
-        if product_info_list:
-            write_product_info_to_csv(product_info_list, csv_filename)
-            print(f"Données enregistrées dans {csv_filename}")
+        for selected_category in category_names:
+            # Retirez le numéro du nom de la catégorie
+            category_name_cleaned = selected_category.split('_')[0]
+            category_dir = f"data/{category_name_cleaned}"
+            
+            product_links = extract_product_links_by_category(base_url, selected_category)
+            
+            # Vérifiez si product_links est vide avant de créer le dossier
+            if product_links is not None and len(product_links) > 0:
+                if not os.path.exists(category_dir):
+                    os.makedirs(category_dir)
                 
+                # Retirez également le suffixe du nom de fichier CSV
+                csv_filename = f"{category_name_cleaned}.csv"
+                csv_path = os.path.join(category_dir, csv_filename)
+                
+                product_info_list = []
+                
+                for product_url in product_links:
+                    product_info = extract_product_info(product_url)
+                    if product_info:
+                        image_url = product_info.get('image_url', '')
+                        alt_text = product_info.get('title', '')
+                        
+                        if image_url:
+                            download_and_save_image(image_url, category_dir, alt_text)
+                        
+                        product_info_list.append(product_info)
+                
+                if product_info_list:
+                    write_product_info_to_csv(product_info_list, csv_path)
+                    print(f"Données enregistrées dans {csv_path}")
+    print("Terminé !")
